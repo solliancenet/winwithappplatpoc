@@ -97,10 +97,6 @@ Refer to the [Before the hands-on lab setup guide](Before%20the%20Hands-On%20Lab
 
     ![In the Overview, Add Container is selected.](media/azure-cosmos-db-add-container.png 'Add Container')
 
-2. In the **Data Explorer**, select **New Container** to create a new container.
-
-    ![In the Data Explorer tab, New Container is selected.](media/azure-cosmos-db-new-container.png 'New Container')
-
 3. In the **New Container** tab, complete the following:
 
    | Field                          | Value                                              |
