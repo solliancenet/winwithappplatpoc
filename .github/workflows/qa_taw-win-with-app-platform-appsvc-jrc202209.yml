@@ -1,5 +1,6 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
+# TODO: delete this
 
 name: Build and deploy ASP.Net Core app to Azure Web App - taw-win-with-app-platform-appsvc-jrc202209
 
@@ -12,6 +13,10 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+
+    defaults:
+      run:
+        working-directory: ./Contoso.Healthcare/
 
     steps:
       - uses: actions/checkout@v2
