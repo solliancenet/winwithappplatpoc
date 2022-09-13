@@ -21,13 +21,11 @@ September 2022
 
     - Trial subscriptions will not work.
 
-~~2. Power Apps subscription.  In order to use the custom connector we will create from API Management, you will need a Power Apps per app or per user plan.  You may also use the free [Power Apps developer plan](https://powerapps.microsoft.com/en-us/developerplan/).~~  _TODO: remove_
-
-3. Install [Visual Studio Code](https://code.visualstudio.com/).
+2. Install [Visual Studio Code](https://code.visualstudio.com/).
 
     - Install the [C# for Visual Studio Code extension](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp).
 
-4. Install the latest version of [the .NET 5 SDK](https://dotnet.microsoft.com/download/dotnet/5.0). _TODO: udpate to dotnet 6_
+3. Install the latest version of [the .NET 6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0).
 
 ## Before the hands-on lab
 
