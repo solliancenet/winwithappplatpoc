@@ -99,14 +99,14 @@ Refer to the [Before the hands-on lab setup guide](Before%20the%20Hands-On%20Lab
 
 3. In the **New Container** tab, complete the following:
 
-   | Field                          | Value                                              |
-   | ------------------------------ | ------------------------------------------         |
-   | Database id                    | _select `Create new` and enter `HealthCheckDB`_    |
-   | Share throughput across containers | _select the checkbox_                          |
-   | Throughput                     | _select `Manual`_                                  |
-   | Number of R/Us                 | _enter `400`_                                      |
-   | Container id                   | _`HealthCheck`_                                    |
-   | Partition key                  | _`/id`_                                            |
+   | Field                              | Value                                           |
+   | ---------------------------------- | ----------------------------------------------- |
+   | Database id                        | _select `Create new` and enter `HealthCheckDB`_ |
+   | Share throughput across containers | _select the checkbox_                           |
+   | Throughput                         | _select `Manual`_                               |
+   | Number of R/Us                     | _enter `400`_                                   |
+   | Container id                       | _`HealthCheck`_                                 |
+   | Partition key                      | _`/id`_                                         |
 
    ![The form fields are completed with the previously described settings.](media/azure-create-cosmos-db-healthcheck-container.png 'Create a container for health checks')
 
@@ -213,12 +213,12 @@ Refer to the [Before the hands-on lab setup guide](Before%20the%20Hands-On%20Lab
 
 6. Navigate to the **Configuration** option in the **Settings** menu for your App Service and select **+ New application setting**.  Enter the following application settings:
 
-    |Name|Value|
-    |----|-----|
-    |Account| _enter the URL of your Cosmos DB account_ |
-    |Key| _enter the primary key for your Cosmos DB account_ |
-    |DatabaseName| _enter `HealthCheckDB`_ |
-    |ContainerName| _enter `HealthCheck`_ |
+    | Name                    | Value                                              |
+    | ----------------------- | -------------------------------------------------- |
+    | CosmosDb__Account       | _enter the URL of your Cosmos DB account_          |
+    | CosmosDb__Key           | _enter the primary key for your Cosmos DB account_ |
+    | CosmosDb__DatabaseName  | _enter `HealthCheckDB`_                            |
+    | CosmosDb__ContainerName | _enter `HealthCheck`_                              |
 
     Select **Save** to save these application settings.
 
@@ -284,12 +284,12 @@ Because this project uses the `Swashbuckle.AspNetCore` NuGet package, we can bui
 
 2. Create a new API from an OpenAPI specification by entering the following details.  Then select **Create** to generate a new API.
 
-    | Parameter                   | Value                                |
-    | --------------------------- | -------------------------------------|
-    | OpenAPI specification       | Enter the swagger.json URL           |
-    | Display name                | Enter `HealthChecks`                 |
-    | Name                        | Enter `healthchecks`                 |
-    | API URL suffix              | Leave blank                          |
+    | Parameter             | Value                      |
+    | --------------------- | -------------------------- |
+    | OpenAPI specification | Enter the swagger.json URL |
+    | Display name          | Enter `HealthChecks`       |
+    | Name                  | Enter `healthchecks`       |
+    | API URL suffix        | Leave blank                |
 
     ![Create a new API from an OpenAPI specification.](media/apim-create.png 'Create from OpenAPI specification')
 
