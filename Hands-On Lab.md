@@ -79,7 +79,7 @@ Azure Front Door is a layer 7 load balancer which includes web application firew
     - Install the [C# for Visual Studio Code extension](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp).
     - Install the [Azure App Service for Visual Studio Code extension](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azureappservice).
 
-3. Install the latest version of [the .NET 5 SDK](https://dotnet.microsoft.com/download/dotnet/5.0).
+3. Install the latest version of [the .NET 6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0).
 
 4. Install the latest version of the [Postman](https://www.postman.com/) client.
 
