@@ -327,7 +327,7 @@ For this final exercise, you will need a Power Apps subscription.  This may be a
 
 ### Task 1:  Create a custom Power Apps connector
 
-1. In your App Management service, navigate to the **Power Platform** menu option in the **APIs** menu.  Then, select **Create a connector**.
+1. In your API Management service, navigate to the **Power Platform** menu option in the **APIs** menu.  Then, select **Create a connector**.
 
     ![Create a custom connector from API Management to Power Apps.](media/apim-create-connector.png 'Create a connector')
 
