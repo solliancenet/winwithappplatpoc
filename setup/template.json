@@ -42,27 +42,17 @@
         "type": "SystemAssigned"
       },
       "properties": {
-        "dnsPrefix": "[parameters('dnsPrefix')]",
+        "dnsPrefix": "[parameters('uniqueSuffix')]",
         "agentPoolProfiles": [
           {
             "name": "agentpool",
-            "osDiskSizeGB": "[parameters('osDiskSizeGB')]",
-            "count": "[parameters('agentCount')]",
-            "vmSize": "[parameters('agentVMSize')]",
+            "osDiskSizeGB": 1023,
+            "count": 3,
+            "vmSize": "Standard_D2s_v3",
             "osType": "Linux",
             "mode": "System"
           }
-        ],
-        "linuxProfile": {
-          "adminUsername": "[parameters('linuxAdminUsername')]",
-          "ssh": {
-            "publicKeys": [
-              {
-                "keyData": "[parameters('sshRSAPublicKey')]"
-              }
-            ]
-          }
-        }
+        ]
       }
     },
     {
