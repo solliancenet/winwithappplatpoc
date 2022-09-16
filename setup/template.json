@@ -25,7 +25,7 @@
   },
   "variables": {
     "location": "[resourceGroup().location]",
-    "acrName": "[concat(resourceGroup().name, '-acr-', parameters('uniqueSuffix'))]",
+    "acrName": "[replace(concat(resourceGroup().name, '-acr-', parameters('uniqueSuffix')),'-','')]",
     "clusterName": "[concat(resourceGroup().name, '-aks-', parameters('uniqueSuffix'))]",
     "cosmosDbAccountName": "[concat(resourceGroup().name, '-cosmosdb-', parameters('uniqueSuffix'))]",
     "appServiceAccountName": "[concat(resourceGroup().name, '-appsvc-', parameters('uniqueSuffix'))]",
