@@ -30,7 +30,7 @@
     "cosmosDbAccountName": "[concat(resourceGroup().name, '-cosmosdb-', parameters('uniqueSuffix'))]",
     "appServiceAccountName": "[concat(resourceGroup().name, '-appsvc-', parameters('uniqueSuffix'))]",
     "apiManagementServiceName": "[concat(resourceGroup().name, '-apiservice-', parameters('uniqueSuffix'))]",
-    "hostingPlanName": "[concat('Humungous-asp-', uniqueString(resourceGroup().id))]"
+    "hostingPlanName": "[concat('Humongous-asp-', uniqueString(resourceGroup().id))]"
   },
   "resources": [
     {
