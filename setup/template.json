@@ -44,7 +44,7 @@
         "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '7f951dda-4ed3-4680-a7ca-43fe172d538d')]",
         "principalType": "ServicePrincipal",
         "principalId": "[reference(variables('clusterName'), '2022-06-01').identityProfile.kubeletidentity.objectId]",
-        "scope": "[resourceId(parameters('acrResourceGroup'),'Microsoft.ContainerRegistry/registries/', parameters('acrName'))]"
+        "scope": "[resourceId('Microsoft.ContainerRegistry/registries/', variables('acrName'))]"
       }
     },
     {
