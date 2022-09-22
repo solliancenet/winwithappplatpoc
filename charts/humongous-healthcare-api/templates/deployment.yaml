@@ -32,6 +32,15 @@ spec:
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          env:
+            - name: CosmosDb__Account
+              value: {{ .Values.cosmosDb.account }}
+            - name: CosmosDb__Key
+              value: {{ .Values.cosmosDb.key }}
+            - name: CosmosDb__DatabaseName
+              value: {{ .Values.cosmosDb.databaseName }}
+            - name: CosmosDb__ContainerName
+              value: {{ .Values.cosmosDb.containerName }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
@@ -39,11 +48,11 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /
+              path: /HealthCheck
               port: http
           readinessProbe:
             httpGet:
-              path: /
+              path: /HealthCheck
               port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
