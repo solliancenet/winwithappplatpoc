@@ -1,4 +1,4 @@
-apiVersion : apps/v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: "taw2aksjrc182-a924"
@@ -15,5 +15,32 @@ spec:
       containers:
         - name: "taw2aksjrc182-a924"
           image: "taw2acrjrc182.azurecr.io/taw2aksjrc182"
+          env:
+            - name: CosmosDb__Account
+              value: { { .Values.cosmosDb.account } }
+            - name: CosmosDb__Key
+              value: { { .Values.cosmosDb.key } }
+            - name: CosmosDb__DatabaseName
+              value: HealthCheckDB
+            - name: CosmosDb__ContainerName
+              value: HealthCheck
+          imagePullPolicy: IfNotPresent
           ports:
-          - containerPort: 80
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /HealthCheck
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /HealthCheck
+              port: http
+          resources:
+            limits:
+              cpu: 200m
+              memory: 256Mi
+            requests:
+              cpu: 200m
+              memory: 256Mi

@@ -4,6 +4,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ACR_LOGIN_SERVER: taw4acrjrc23a.azurecr.io
+      AKS_NAMESPACE: health-check
+      CONTAINER_IMAGE: ${{ env.ACR_LOGIN_SERVER }}/humongous-healthcare-api:${{ github.sha }}
     steps:
     - uses: actions/checkout@master
 
@@ -14,41 +16,39 @@ jobs:
         password: ${{ secrets.acr_password }}
 
     - name: Build and push image to ACR
-      env:
-        CONTAINER_IMAGE: ${{ env.ACR_LOGIN_SERVER }}/humongous-healthcare-api:${{ github.sha }}
       id: build-image
       run: |
         docker build "$GITHUB_WORKSPACE/Humongous.Healthcare" -f  "Humongous.Healthcare/Dockerfile" -t ${CONTAINER_IMAGE} --label dockerfile-path=Humongous.Healthcare/Dockerfile
         docker push ${CONTAINER_IMAGE}
 
-    # - uses: azure/k8s-set-context@v1
-    #   with:
-    #      kubeconfig: ${{ secrets.aks_taw2aksjrc182_kubeConfig }}
-    #   id: login
+    - uses: azure/k8s-set-context@v1
+      with:
+         kubeconfig: ${{ secrets.aks_kubeConfig }}
+      id: login
 
-    # - name: Create namespace
-    #   run: |
-    #     namespacePresent=`kubectl get namespace | grep taw-health-checks | wc -l`
-    #     if [ $namespacePresent -eq 0 ]
-    #     then
-    #         echo `kubectl create namespace taw-health-checks`
-    #     fi
+    - name: Create namespace
+      run: |
+        namespacePresent=`kubectl get namespace | grep ${AKS_NAMESPACE} | wc -l`
+        if [ $namespacePresent -eq 0 ]
+        then
+            echo `kubectl create namespace ${AKS_NAMESPACE}`
+        fi
 
-    # - uses: azure/k8s-create-secret@v1
-    #   with:
-    #     namespace: taw-health-checks
-    #     container-registry-url: taw2acrjrc182.azurecr.io
-    #     container-registry-username: ${{ secrets.acr_taw2acrjrc182_username }}
-    #     container-registry-password: ${{ secrets.acr_taw2acrjrc182_password }}
-    #     secret-name: taw2aksjrc18dockerauth
+    - uses: azure/k8s-create-secret@v1
+      with:
+        namespace: ${{ env.AKS_NAMESPACE }}
+        container-registry-url: ${{ env.ACR_LOGIN_SERVER }}
+        container-registry-username: ${{ secrets.acr_username }}
+        container-registry-password: ${{ secrets.acr_password }}
+        secret-name: dockerauth
 
-    # - uses: azure/k8s-deploy@v1.2
-    #   with:
-    #     namespace: taw-health-checks
-    #     manifests: |
-    #       manifests/deployment.yml
-    #       manifests/service.yml
-    #     images: |
-    #       taw2acrjrc182.azurecr.io/taw2aksjrc182:${{ github.sha }}
-    #     imagepullsecrets: |
-    #       taw2aksjrc18dockerauth
+    - uses: azure/k8s-deploy@v1.2
+      with:
+        namespace: ${{ env.AKS_NAMESPACE }}
+        manifests: |
+          manifests/deployment.yml
+          manifests/service.yml
+        images: |
+          ${{ env.CONTAINER_IMAGE }}
+        imagepullsecrets: |
+          dockerauth
