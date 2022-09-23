@@ -42,12 +42,12 @@ jobs:
           container-registry-password: ${{ secrets.acr_password }}
           secret-name: dockerauth
 
-      - uses: azure/k8s-create-secret@v1
+      - uses: azure/k8s-create-secret@v2
         with:
           namespace: ${{ env.AKS_NAMESPACE }}
           secret-type: "generic"
           secret-name: cosmosdb
-          data: |
+          string-data: |
             cosmosdb-account: ${{ secrets.COSMOSDB_ACCOUNT }}
             cosmosdb-key: ${{ secrets.COSMOSDB_KEY }}
 
