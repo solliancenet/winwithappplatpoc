@@ -48,8 +48,10 @@ jobs:
           secret-type: "generic"
           secret-name: cosmosdb
           string-data: |
-            cosmosdb-account: ${{ secrets.COSMOSDB_ACCOUNT }}
-            cosmosdb-key: ${{ secrets.COSMOSDB_KEY }}
+            {
+              "cosmosdb-account": "${{ secrets.COSMOSDB_ACCOUNT }}"
+              "cosmosdb-key": "${{ secrets.COSMOSDB_KEY }}"
+            }
 
       - uses: azure/k8s-deploy@v1.2
         with:
