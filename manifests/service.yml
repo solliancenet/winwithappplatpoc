@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: "taw2aksjrc182-a924"
+    labels:
+        app: "taw2aksjrc182-a924"
+spec:
+    type: LoadBalancer
+    ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http
+    selector:
+        app: "taw2aksjrc182-a924"
