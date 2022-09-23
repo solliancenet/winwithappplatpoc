@@ -1,0 +1,50 @@
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    
+    - uses: azure/docker-login@v1
+      with:
+        login-server: taw2acrjrc182.azurecr.io
+        username: ${{ secrets.acr_taw2acrjrc182_username }}
+        password: ${{ secrets.acr_taw2acrjrc182_password }}
+    
+    - name: Build and push image to ACR
+      id: build-image
+      run: |
+        docker build "$GITHUB_WORKSPACE/Humongous.Healthcare" -f  "Humongous.Healthcare/Dockerfile" -t taw2acrjrc182.azurecr.io/taw2aksjrc182:${{ github.sha }} --label dockerfile-path=Humongous.Healthcare/Dockerfile
+        docker push taw2acrjrc182.azurecr.io/taw2aksjrc182:${{ github.sha }}
+    
+    - uses: azure/k8s-set-context@v1
+      with:
+         kubeconfig: ${{ secrets.aks_taw2aksjrc182_kubeConfig }}
+      id: login
+    
+    - name: Create namespace
+      run: |
+        namespacePresent=`kubectl get namespace | grep taw-health-checks | wc -l`
+        if [ $namespacePresent -eq 0 ]
+        then
+            echo `kubectl create namespace taw-health-checks`
+        fi
+
+    - uses: azure/k8s-create-secret@v1
+      with:
+        namespace: taw-health-checks
+        container-registry-url: taw2acrjrc182.azurecr.io
+        container-registry-username: ${{ secrets.acr_taw2acrjrc182_username }}
+        container-registry-password: ${{ secrets.acr_taw2acrjrc182_password }}
+        secret-name: taw2aksjrc18dockerauth
+       
+    - uses: azure/k8s-deploy@v1.2
+      with:
+        namespace: taw-health-checks
+        manifests: |
+          manifests/deployment.yml
+          manifests/service.yml
+        images: |
+          taw2acrjrc182.azurecr.io/taw2aksjrc182:${{ github.sha }}
+        imagepullsecrets: |
+          taw2aksjrc18dockerauth
