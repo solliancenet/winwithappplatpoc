@@ -1,25 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "taw2aksjrc182-a924"
+  name: "humongous-healthcare-api"
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: "taw2aksjrc182-a924"
+      app: "humongous-healthcare-api"
   template:
     metadata:
       labels:
-        app: "taw2aksjrc182-a924"
+        app: "humongous-healthcare-api"
     spec:
       containers:
-        - name: "taw2aksjrc182-a924"
-          image: "taw2acrjrc182.azurecr.io/taw2aksjrc182"
+        - name: "humongous-healthcare-api"
+          image: ""
           env:
             - name: CosmosDb__Account
-              value: "{ { .Values.cosmosDb.account } }"
+              valueFrom:
+                secretKeyRef:
+                name: cosmosdb
+                key: cosmosdb-account
+                optional: false
             - name: CosmosDb__Key
-              value: "{ { .Values.cosmosDb.key } }"
+              valueFrom:
+                secretKeyRef:
+                name: cosmosdb
+                key: cosmosdb-key
+                optional: false
             - name: CosmosDb__DatabaseName
               value: HealthCheckDB
             - name: CosmosDb__ContainerName
