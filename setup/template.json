@@ -82,7 +82,7 @@
         "name": "Basic"
       },
       "properties": {
-        "adminUserEnabled": false
+        "adminUserEnabled": true
       }
     },
     {
