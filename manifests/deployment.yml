@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: "taw2aksjrc182-a924"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "taw2aksjrc182-a924"
+  template:
+    metadata:
+      labels:
+        app: "taw2aksjrc182-a924"
+    spec:
+      containers:
+        - name: "taw2aksjrc182-a924"
+          image: "taw2acrjrc182.azurecr.io/taw2aksjrc182"
+          ports:
+          - containerPort: 80
