@@ -17,9 +17,9 @@ spec:
           image: "taw2acrjrc182.azurecr.io/taw2aksjrc182"
           env:
             - name: CosmosDb__Account
-              value: { { .Values.cosmosDb.account } }
+              value: "{ { .Values.cosmosDb.account } }"
             - name: CosmosDb__Key
-              value: { { .Values.cosmosDb.key } }
+              value: "{ { .Values.cosmosDb.key } }"
             - name: CosmosDb__DatabaseName
               value: HealthCheckDB
             - name: CosmosDb__ContainerName
