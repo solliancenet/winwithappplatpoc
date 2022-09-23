@@ -2,18 +2,20 @@ on: [push]
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      ACR_LOGIN_SERVER: taw4acrjrc23a.azurecr.io
     steps:
     - uses: actions/checkout@master
 
     - uses: azure/docker-login@v1
       with:
-        login-server: taw4acrjrc23a.azurecr.io
+        login-server: ${ACR_LOGIN_SERVER}
         username: ${{ secrets.acr_username }}
         password: ${{ secrets.acr_password }}
 
     - name: Build and push image to ACR
       env:
-        CONTAINER_IMAGE: taw4acrjrc23a.azurecr.io/humongous-healthcare-api:${{ github.sha }}
+        CONTAINER_IMAGE: ${ACR_LOGIN_SERVER}/humongous-healthcare-api:${{ github.sha }}
       id: build-image
       run: |
         docker build "$GITHUB_WORKSPACE/Humongous.Healthcare" -f  "Humongous.Healthcare/Dockerfile" -t ${CONTAINER_IMAGE} --label dockerfile-path=Humongous.Healthcare/Dockerfile
