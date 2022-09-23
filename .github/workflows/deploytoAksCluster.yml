@@ -15,11 +15,11 @@ jobs:
 
     - name: Build and push image to ACR
       env:
-        CONTAINER_IMAGE: ${ACR_LOGIN_SERVER}/humongous-healthcare-api:${{ github.sha }}
+        CONTAINER_IMAGE: humongous-healthcare-api:${{ github.sha }}
       id: build-image
       run: |
-        docker build "$GITHUB_WORKSPACE/Humongous.Healthcare" -f  "Humongous.Healthcare/Dockerfile" -t ${CONTAINER_IMAGE} --label dockerfile-path=Humongous.Healthcare/Dockerfile
-        docker push ${CONTAINER_IMAGE}
+        docker build "$GITHUB_WORKSPACE/Humongous.Healthcare" -f  "Humongous.Healthcare/Dockerfile" -t ${ACR_LOGIN_SERVER}/${CONTAINER_IMAGE} --label dockerfile-path=Humongous.Healthcare/Dockerfile
+        docker push ${ACR_LOGIN_SERVER}/${CONTAINER_IMAGE}
 
     # - uses: azure/k8s-set-context@v1
     #   with:
