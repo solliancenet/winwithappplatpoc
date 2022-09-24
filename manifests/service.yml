@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-    name: "taw2aksjrc182-a924"
+    name: "humongous-healthcare-api"
     labels:
-        app: "taw2aksjrc182-a924"
+        app: "humongous-healthcare-api"
 spec:
     type: LoadBalancer
     ports:
@@ -12,4 +12,4 @@ spec:
       protocol: TCP
       name: http
     selector:
-        app: "taw2aksjrc182-a924"
+        app: "humongous-healthcare-api"
