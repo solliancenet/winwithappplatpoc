@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: "humongous-healthcare-api"
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: "humongous-healthcare-api"
