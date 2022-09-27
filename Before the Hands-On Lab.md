@@ -27,6 +27,8 @@ September 2022
 
 3. Install the latest version of [the .NET 6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0).
 
+**TODO** Docker is required
+**TODO** Kubectl is required
 ## Before the hands-on lab
 
 Duration: 15 minutes

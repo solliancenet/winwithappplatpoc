@@ -19,7 +19,6 @@ September 2022
     - [Task 2: Run the Humongos Healthcare Web API service in a container](#task-2-run-the-humongos-healthcare-web-api-service-in-a-container)
     - [Task 3: Push the Humongous Healthcare Web API container image to ACR](#task-3-push-the-humongous-healthcare-web-api-container-image-to-acr)
     - [Task 4: Deploy the Humongous Healthcare Web API service to AKS](#task-4-deploy-the-humongous-healthcare-web-api-service-to-aks)
-  - [TODO review](#todo-review)
   - [Exercise 3:  Configure continuous deployment with GitHub Actions](#exercise-3--configure-continuous-deployment-with-github-actions)
     - [Task 1:  Create and Edit a GitHub Action](#task-1--create-and-edit-a-github-action)
   - [Exercise 4:  Configure API Management](#exercise-4--configure-api-management)
@@ -288,10 +287,10 @@ Refer to the [Before the hands-on lab setup guide](Before%20the%20Hands-On%20Lab
 
 ### Task 4: Deploy the Humongous Healthcare Web API service to AKS
 
-1. Open the hands-on lab in Visual Studio Code and use the terminal to navigate to the `Humongous.Healthcare` project.
+1. Open the hands-on lab in Visual Studio Code.
 
 2. Create a folder named `manifests` and add a file named `deployment.yml` with the following content:
-## TODO review
+
     ```yaml
     apiVersion: apps/v1
     kind: Deployment
@@ -309,7 +308,7 @@ Refer to the [Before the hands-on lab setup guide](Before%20the%20Hands-On%20Lab
         spec:
         containers:
             - name: "humongous-healthcare-api"
-            image: "taw4acrjrc23a.azurecr.io/humongous-healthcare-api:0.0.0"
+            image: "<replace with your login server>/humongous-healthcare-api:0.0.0"
             env:
                 - name: CosmosDb__Account
                 valueFrom:
@@ -349,40 +348,75 @@ Refer to the [Before the hands-on lab setup guide](Before%20the%20Hands-On%20Lab
                 memory: 256Mi
     ```
 
-3. Open the Azure extension for Visual Studio Code.  Navigate to the **App Service** menu and select your App Service account.  Then, select the **Deploy to Web App...** option.
+    This manifest contains the AKS deployment configuration for the Humongous Healthcare Web API container images.  Be sure to update `<replace with your login server>` with your ACR login server name.
 
-    ![Select the App Service.](media/vscode-app-service.png 'App Service')
+3. Create another YAML file in the `manifest` folder called `service.yml` and add the following content:
 
-4. Select **Browse** from the list of folders to deploy.
+    ```yaml
+    apiVersion: v1
+    kind: Service
+    metadata:
+    name: "humongous-healthcare-api"
+    labels:
+        app: "humongous-healthcare-api"
+    spec:
+    type: LoadBalancer
+    ports:
+        - port: 80
+        targetPort: 80
+        protocol: TCP
+        name: http
+    selector:
+        app: "humongous-healthcare-api"
+    ```
 
-    ![Select the Browse option.](media/vscode-app-service-1.png 'Browse for a folder')
+    This manifest contains the AKS service configuration for the Humongous Healthcare Web API deployment.  Because it is a `LoadBalancer` type service, AKS will make the Web API service available to clients outside the cluster.
 
-5. Choose the **Humongous.Healthcare** folder.
+4. Login to your AKS cluster using the Azure CLI command shown below.
 
-    ![Select the Humongous.Healthcare folder.](media/vscode-app-service-2.png 'Choose a folder')
+    ```sh
+    az aks get-credentials --name <your cluster name> --resource-group <your resource group>
+    ```
 
-6. Choose the subscription hosting the App Service in the next step, and then select the App Service itself in the following step.
+    Example
 
-    ![Select the App Service.](media/vscode-app-service-3.png 'Choose an App Service')
+    ```
+    az aks get-credentials --name taw-aks --resource-group taw
+    ```
 
-7. Select **Deploy** from the next menu to push the service.
+5. Create a Kubernetes namespace for the service using the following command.
 
-    ![Deploy the App Service.](media/vscode-app-service-4.png 'Deploy the App Service')
+    ```sh
+    kubectl create namespace health-check
+    ```
 
-8. Navigate to the **Configuration** option in the **Settings** menu for your App Service and select **+ New application setting**.  Enter the following application settings:
+6. Create a Kubernetes secret to provide the CosmosDB configuration using the following command.
 
-    | Name                    | Value                                              |
-    | ----------------------- | -------------------------------------------------- |
-    | CosmosDb__Account       | _enter the URL of your Cosmos DB account_          |
-    | CosmosDb__Key           | _enter the primary key for your Cosmos DB account_ |
-    | CosmosDb__DatabaseName  | _enter `HealthCheckDB`_                            |
-    | CosmosDb__ContainerName | _enter `HealthCheck`_                              |
+   ```sh
+   kubectl create secret generic cosmosdb --namespace health-check --from-literal=cosmosdb-account='<Replace with your account URL>' --from-literal=cosmosdb-key='<Replace with your account key>'
+   ```
 
-    Select **Save** to save these application settings.
+    Example:
 
-    ![Application settings for the App Service.](media/app-service-app-settings.png 'Application settings')
+   ```sh
+   kubectl create secret generic cosmosdb --namespace health-check --from-literal=cosmosdb-account='https://taw-cosmosdb.documents.azure.com:443/' --from-literal=cosmosdb-key='qwerty123456!@#$%==='
+   ```
 
-> **Note:** If you get 404 errors when trying to access your App Service at this point, don't panic!  The purpose of this task was to link your existing code with an App Service.  In the next task, you will configure a CI/CD process to perform this deployment automatically upon check-in.  If you do see 404 errors, the following exercise will correct them.
+7. Create the AKS deployment and service using the following commands.
+
+    ```sh
+    kubectl apply --namespace health-check --filename manifests/deployment.yml --filename manifests/service.yml
+    ```
+
+8. Visit your AKS cluster in the Azure Portal and navigate to "Kubernetes resources > Services and ingresses".  Click the "External IP" link for `humonguous-healthcare-api`.  **Note**: You will initially recieve a 404 error when the new brower tab opens.  Continue to the next step.
+
+    ![The portal AKS workloads is displayed.](media/aks-service-and-ingresses.png "Service External IP")
+
+9. Add the `/HealthCheck` IP to the end of the URL to view the raw health check data.
+
+    ![The Health Check data is displayed in the browser.](media/aks-health-checks.png "Health Check JSON")
+
+7. Once this deployment succeeds, you should be able to navigate to your External IP address in Postman and perform the same `GET`, `POST`, `PUT`, and `DELETE` operations you could locally.
 
 ## Exercise 3:  Configure continuous deployment with GitHub Actions
 
