@@ -85,6 +85,8 @@ Azure Front Door is a layer 7 load balancer which includes web application firew
 3. Install the latest version of [the .NET 6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0).
 
 4. Install the latest version of the [Postman](https://www.postman.com/) client.
+5. Install [Docker Desktop](https://docs.docker.com/desktop/)
+6. Install the [Kubernetes CLI](https://kubernetes.io/docs/tasks/tools/)
 
 ## Before the hands-on lab
 
