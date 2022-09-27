@@ -19,8 +19,8 @@ September 2022
     - [Task 2: Run the Humongos Healthcare Web API service in a container](#task-2-run-the-humongos-healthcare-web-api-service-in-a-container)
     - [Task 3: Push the Humongous Healthcare Web API container image to ACR](#task-3-push-the-humongous-healthcare-web-api-container-image-to-acr)
     - [Task 4: Deploy the Humongous Healthcare Web API service to AKS](#task-4-deploy-the-humongous-healthcare-web-api-service-to-aks)
-  - [Exercise 3:  Configure continuous deployment with GitHub Actions](#exercise-3--configure-continuous-deployment-with-github-actions)
-    - [Task 1:  Create and Edit a GitHub Action](#task-1--create-and-edit-a-github-action)
+  - [Exercise 3:  Configure AKS continuous deployment with GitHub Actions](#exercise-3--configure-aks-continuous-deployment-with-github-actions)
+    - [Task 1:  Create a GitHub Actions Workflow](#task-1--create-a-github-actions-workflow)
   - [Exercise 4:  Configure API Management](#exercise-4--configure-api-management)
     - [Task 1:  Review the Health Checks API](#task-1--review-the-health-checks-api)
     - [Task 2:  Connect API Management to the App Service](#task-2--connect-api-management-to-the-app-service)
@@ -418,39 +418,106 @@ Refer to the [Before the hands-on lab setup guide](Before%20the%20Hands-On%20Lab
 
 7. Once this deployment succeeds, you should be able to navigate to your External IP address in Postman and perform the same `GET`, `POST`, `PUT`, and `DELETE` operations you could locally.
 
-## Exercise 3:  Configure continuous deployment with GitHub Actions
+## Exercise 3:  Configure AKS continuous deployment with GitHub Actions
 
-### Task 1:  Create and Edit a GitHub Action
+### Task 1:  Create a GitHub Actions Workflow
 
-1. Navigate to the **Deployment Center** option in the **Deployment** menu for your App Service.  From the **Source** drop-down list, select **GitHub**.  Note that you may need to authenticate with GitHub and provide specific access permissions for your account.
+1. Open the hands-on lab in Visual Studio Code.
 
-    ![Select GitHub for Continuous Deployment (CI/CD).](media/cicd-source.png 'Select code source')
-
-2. Choose your the organization, repository, and primary branch for this lab.  Then, select **Save** to create a YAML file containing a GitHub Action in the `.github\workflows` folder of your repository.
-
-    ![Create a GitHub Action to deploy on code check-in.](media/cicd-create-action.png 'Create a Github Action')
-
-3. Navigate to your GitHub repository via the GitHub website and select the **.github/workflows** folder which now appears.
-
-    ![Open the workflows folder.](media/cicd-workflows.png 'Open the workflows folder')
-
-4. Inside the folder, there should be one YAML file.  Open that file and then select the **Edit** option to modify this file.  We will need to make a change to build and deploy just the **Humongous.Healthcare** folder within our entire repository.
-
-    ![Edit the GitHub Action.](media/cicd-edit.png 'Edit file')
-
-5. Add the following below the line `runs-on: windows-latest` in your YAML file.  Then, select **Start commit** and **Commit** to save your changes.
+2. Create a folder named `.github/workflows` and add a file named `deployToAksCluster.yml` with the following content (remember to replace the placeholders with your ACR name where noted below):
 
     ```yaml
-    defaults:
-      run:
-        working-directory: ./Humongous.Healthcare/
+    name: API - AKS - Build and deploy
+
+    on:
+    push:
+        branches:
+        - main
+        paths:
+        - Humongous.Healthcare/**
+        - manifests/**
+
+    jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+        env:
+        ACR_LOGIN_SERVER: <replace with your ACR name>.azurecr.io
+        AKS_NAMESPACE: health-check
+        CONTAINER_IMAGE: <replace with your ACR name>.azurecr.io/humongous-healthcare-api:${{ github.sha }}
+        steps:
+        - uses: actions/checkout@master
+
+        - uses: azure/docker-login@v1
+            with:
+            login-server: ${{ env.ACR_LOGIN_SERVER }}
+            username: ${{ secrets.acr_username }}
+            password: ${{ secrets.acr_password }}
+
+        - name: Build and push image to ACR
+            id: build-image
+            run: |
+            docker build "$GITHUB_WORKSPACE/Humongous.Healthcare" -f  "Humongous.Healthcare/Dockerfile" -t ${CONTAINER_IMAGE} --label dockerfile-path=Humongous.Healthcare/Dockerfile
+            docker push ${CONTAINER_IMAGE}
+
+        - uses: azure/k8s-set-context@v1
+            with:
+            kubeconfig: ${{ secrets.aks_kubeConfig }}
+            id: login
+
+        - name: Create namespace
+            run: |
+            namespacePresent=`kubectl get namespace | grep ${AKS_NAMESPACE} | wc -l`
+            if [ $namespacePresent -eq 0 ]
+            then
+                echo `kubectl create namespace ${AKS_NAMESPACE}`
+            fi
+
+        - uses: azure/k8s-create-secret@v1
+            name: dockerauth - create secret
+            with:
+            namespace: ${{ env.AKS_NAMESPACE }}
+            container-registry-url: ${{ env.ACR_LOGIN_SERVER }}
+            container-registry-username: ${{ secrets.acr_username }}
+            container-registry-password: ${{ secrets.acr_password }}
+            secret-name: dockerauth
+
+        - uses: Azure/k8s-create-secret@v1
+            name: cosmosdb - create secret
+            with:
+            namespace: ${{ env.AKS_NAMESPACE }}
+            secret-type: 'generic'
+            secret-name: cosmosdb
+            arguments:
+                --from-literal=cosmosdb-account=${{ secrets.COSMOSDB_ACCOUNT }}
+                --from-literal=cosmosdb-key=${{ secrets.COSMOSDB_KEY }}
+
+        - uses: azure/k8s-deploy@v1.2
+            with:
+            namespace: ${{ env.AKS_NAMESPACE }}
+            manifests: |
+                manifests/deployment.yml
+                manifests/service.yml
+            images: |
+                ${{ env.CONTAINER_IMAGE }}
+            imagepullsecrets: |
+                dockerauth
     ```
 
-6. After committing your changes, the GitHub Action should run automatically and succeed.  Select the **Actions** menu option to review workflow outcomes.  There will be one prior failure, which happened when App Services set up the initial GitHub Action pointing to the root folder.
+3. The workflow will fail on the intial run because it requires some secrets to be setup in the repository.  Navigate to the repository in GitHub then select "Settings > Secrets > Actions".  Finally use the "New Repository Secret" button to create secrets.
 
-    ![Review workflow results on the Actions page.](media/cicd-actions.png 'All workflows')
+    ![Create a new repository secret.](media/github-new-repository-secret.png "New Repository Secret")
 
-7. Once this deployment succeeds, you should be able to navigate to your App Service URL in Postman and perform the same `GET`, `POST`, `PUT`, and `DELETE` operations you could locally.
+    Create the following secrets.
+
+    - ACR_USERNAME - Copy from the "Access Keys" pane on your container registry.
+    - ACR_PASSWORD - Copy from the "Access Keys" pane on your container registry.
+    - AKS_KUBECONFIG - Use the following Azure CLI command to retrieve the configuration data and save it to a file, then use the contents of the file as your secret: `az aks get-credentials --name <your cluster name> --resource-group <your resource group> --file kube.config`
+    - COSMOSDB_ACCOUNT - Use the CosmosDb account URI you have previously retrieved during this lab.
+    - COSMOSDB_KEY - Use the CosmosDb account key you have previously retrieved during this lab.
+
+4. Once you create all the secrets, navigate to the "Actions" tab, select your failed workflow run, and choose "Re-run all Jobs".
+
+5.  Once this deployment succeeds, you should still be able to navigate to your App Service URL in Postman and perform the same `GET`, `POST`, `PUT`, and `DELETE` operations you could locally.
 
 ## Exercise 4:  Configure API Management
 
