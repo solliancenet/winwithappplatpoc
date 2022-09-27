@@ -24,10 +24,9 @@ September 2022
   - [Exercise 4:  Configure API Management](#exercise-4--configure-api-management)
     - [Task 1:  Review the Health Checks API](#task-1--review-the-health-checks-api)
     - [Task 2:  Connect API Management to the App Service](#task-2--connect-api-management-to-the-app-service)
-  - [Exercise 5:  Create a Power Apps custom connector and application](#exercise-5--create-a-power-apps-custom-connector-and-application)
-    - [Task 1:  Create a custom Power Apps connector](#task-1--create-a-custom-power-apps-connector)
-    - [Task 2:  Use the Power Apps custom connector in a new application](#task-2--use-the-power-apps-custom-connector-in-a-new-application)
-    - [Task 3: Deploy the Humongous Healthcare Web API service to AKS](#task-3-deploy-the-humongous-healthcare-web-api-service-to-aks)
+  - [Exercise 5: Deploy the Humongous Healthcare Web Application to access the Web API](#exercise-5-deploy-the-humongous-healthcare-web-application-to-access-the-web-api)
+    - [Task 1: Configure API Management to use HTTPS](#task-1-configure-api-management-to-use-https)
+    - [Task 2: Deploy the Humongous Healthcare Web API service to App Services](#task-2-deploy-the-humongous-healthcare-web-api-service-to-app-services)
 
 # Hands-on Lab Step-by-Step
 
@@ -578,100 +577,7 @@ Because this project uses the `Swashbuckle.AspNetCore` NuGet package, we can bui
 
     > **Note:** If you are using the Consumption SKU of API Management, you will not be able to save this policy.  In that case, select **Discard** to cancel this operation.  You might also need to delete a **rate-limit-key** policy below the **base** policy in your **Inbound processing** section.  To do this, select the **...** menu and choose **Delete** to remove it.
 
-## Exercise 5:  Create a Power Apps custom connector and application
+## Exercise 5: Deploy the Humongous Healthcare Web Application to access the Web API
 
-For this final exercise, you will need a Power Apps subscription.  This may be a paid subscription or a free Power Apps developer plan.
-
-### Task 1:  Create a custom Power Apps connector
-
-1. In your API Management service, navigate to the **Power Platform** menu option in the **APIs** menu.  Then, select **Create a connector**.
-
-    ![Create a custom connector from API Management to Power Apps.](media/apim-create-connector.png 'Create a connector')
-
-2. Choose **HealthChecks** from the API drop-down list and then select the PowerApps environment you wish to deploy to.  Keep the API display name as `HealthChecks` and select **Create**.  Note that this operation may take 1-2 minutes to complete.
-
-    ![Select the HealthChecks API and publish to an existing Power Apps environment.](media/apim-create-connector-1.png 'Create a connector')
-
-3. By default, API Management requires callers to pass in a subscription key, and this is what we use for rate limiting.  To allow for testing in Power Apps, we will add a new subscription key.  To do this, navigate to the **Subscriptions** option on the **APIs** menu and then select **+ Add subscription**.
-
-    ![Add a new subscription key for API Management.](media/apim-add-subscription.png 'Add a subscription key')
-
-4. Enter `power-apps-testing` for the Name and `Power Apps Testing` for the Display Name.  Then, choose **API** from the Scope menu and in the APIs drop-down menu, choose **HealthChecks**.  This will limit the key to one API.  Select **Create** to complete this process.
-
-    ![Create a new subscription key for API Management.](media/apim-new-subscription.png 'Add a new subscription')
-
-5. To view the key, select the **...** menu for the newly-created subscription and select **Show/hide keys**.  Copy the primary key for use later.
-
-    ![Show the keys for a particular subscription.](media/apim-show-keys.png 'Show/hide keys')
-
-### Task 2:  Use the Power Apps custom connector in a new application
-
-1. Navigate to [the Power Apps website](https://make.powerapps.com/).  In the **Dataverse** menu, select **Custom Connectors**.  You should see the **HealthChecks** connector.  Choose the **Edit** option to review this connector.
-
-    ![Select the HealthChecks custom connector.](media/pa-custom-connectors.png 'Custom connectors')
-
-2. Navigate to the **5. Test** page and select **+ New connection** to create a new connection for this custom connector.
-
-    ![Create a new connection.](media/pa-new-connection.png 'New connection')
-
-3. Enter your subscription key and select **Create** to save this connection.  This will take you to the **Connections** menu setting, so return to where you were.
-
-    ![Provide a valid subscription key.](media/pa-new-connection-1.png 'Create a new connection')
-
-4. Using the newly-created connection, choose the **get-healthcheck** operation and select **Test operation**.  Doing so, you should get back a 200 response code and see the health checks you have created.  You may also test the other methods if you wish.  Once you have finished, select **Close** to close the custom connector panel.
-
-    ![Test the get-healthcheck operation.](media/pa-test-operation.png 'Test operation')
-
-5. On the **Home** menu, select **Canvas app from blank** to create a new canvas app.
-
-    ![Create a new canvas app.](media/pa-new-canvas-app.png 'Canvas app from blank')
-
-6. Name the app **Health Checks** and set the format to **Phone**.  Then, select **Create**.
-
-    ![Name the application and set the format to fit on a phone.](media/pa-new-canvas-app-1.png 'Create an app')
-
-7. On the Power Apps canvas, select the **Data** menu and then choose **+ Add data**.  In the dropdown, expand the **Connectors** menu and choose the **HealthChecks** custom connector.  You will then be asked to choose a connection; choose the **HealthChecks** connection you created in this task.
-
-    ![Add the HealthChecks custom connector to a Power App.](media/pa-add-custom-connector.png 'HealthChecks connector')
-
-At this point, you can reference the **HealthChecks** connector and methods such as `HealthChecks.gethealthcheck()` to populate canvas elements.  Using the available API endpoints, you can create a mobile application which allows for entering new health check data, reviewing old health checks, and listing symptoms on a details page.
-
-![An example health check application built using Power Apps.](media/health-checks-app.png 'The Health Checks app')
-
-
-### Task 3: Deploy the Humongous Healthcare Web API service to AKS
-
-1. Open the Azure extension for Visual Studio Code.  Navigate to the **App Service** menu and select your App Service account.  Then, select the **Deploy to Web App...** option.
-
-    ![Select the App Service.](media/vscode-app-service.png 'App Service')
-
-2. Select **Browse** from the list of folders to deploy.
-
-    ![Select the Browse option.](media/vscode-app-service-1.png 'Browse for a folder')
-
-3. Choose the **Humongous.Healthcare** folder.
-
-    ![Select the Humongous.Healthcare folder.](media/vscode-app-service-2.png 'Choose a folder')
-
-4. Choose the subscription hosting the App Service in the next step, and then select the App Service itself in the following step.
-
-    ![Select the App Service.](media/vscode-app-service-3.png 'Choose an App Service')
-
-5. Select **Deploy** from the next menu to push the service.
-
-    ![Deploy the App Service.](media/vscode-app-service-4.png 'Deploy the App Service')
-
-6. Navigate to the **Configuration** option in the **Settings** menu for your App Service and select **+ New application setting**.  Enter the following application settings:
-
-    | Name                    | Value                                              |
-    | ----------------------- | -------------------------------------------------- |
-    | CosmosDb__Account       | _enter the URL of your Cosmos DB account_          |
-    | CosmosDb__Key           | _enter the primary key for your Cosmos DB account_ |
-    | CosmosDb__DatabaseName  | _enter `HealthCheckDB`_                            |
-    | CosmosDb__ContainerName | _enter `HealthCheck`_                              |
-
-    Select **Save** to save these application settings.
-
-    ![Application settings for the App Service.](media/app-service-app-settings.png 'Application settings')
-
-> **Note:** If you get 404 errors when trying to access your App Service at this point, don't panic!  The purpose of this task was to link your existing code with an App Service.  In the next task, you will configure a CI/CD process to perform this deployment automatically upon check-in.  If you do see 404 errors, the following exercise will correct them.
+### Task 1: Configure API Management to use HTTPS
+### Task 2: Deploy the Humongous Healthcare Web API service to App Services
