@@ -527,11 +527,11 @@ Refer to the [Before the hands-on lab setup guide](Before%20the%20Hands-On%20Lab
 
 Because this project uses the `Swashbuckle.AspNetCore` NuGet package, we can build a Swagger API and user interface automatically from our Web API definition.  The `ConfigureServices()` method in **Startup.cs** automatically configures a [Swagger OpenAPI interface](https://swagger.io/specification/).
 
-1. Navigate to https://{appsvc}.azurewebsites.net/swagger/v1/swagger.json, replacing `{appsvc}` with the name of your App Service URL.  This will take you to a JSON schema describing the Health Check API.
+1. Navigate to http://{external-ip}/swagger/v1/swagger.json, replacing `{external-ip}` with the external IP address of your cluster.  This will take you to a JSON schema describing the Health Check API.
 
     ![Review the Swagger-generated JSON describing this API.](media/swagger-json.png 'API description in JSON format')
 
-2. Navigate to https://{appsvc}.azurewebsites.net/swagger/index.html, again replacing `{appsvc}` with the name of your App Service URL.  This will take you to an auto-generated user interface describing each of the API endpoints.
+2. Navigate to http://{external-ip}/swagger/index.html, again replacing `{external-ip}` with the external IP address of your cluster.  This will take you to an auto-generated user interface describing each of the API endpoints.
 
     ![Review the Swagger UI showing API endpoints and available verbs.](media/swagger-ui.png 'Swagger UI')
 
@@ -558,25 +558,21 @@ Because this project uses the `Swashbuckle.AspNetCore` NuGet package, we can bui
 
     ![The Health Check endpoints are now available in API Management.](media/apim-endpoints.png 'API Management endpoints')
 
-4. In the **Web service URL** settings entry, enter the base URL for your App Service.  Then, select **Save**.
-
-    ![Update the web service URL to point to your App Service.](media/apim-web-service-url.png 'Web service URL')
-
-5. Select the **Test** menu and then choose the first `GET` method for health checks.  Select **Send** to perform a test.  You should receive back a response with "200 OK" indicating that the request was successful.
+4. Select the **Test** menu and then choose the first `GET` method for health checks.  Select **Send** to perform a test.  You should receive back a response with "200 OK" indicating that the request was successful.
 
     ![Test API Management.](media/apim-test.png 'Perform a test')
 
     > **Note:**  If you receive a 500 error, make sure that you configured the web service URL in the prior step.
 
-6. Humongous Healthcare would like to perform rate limiting as a method of limiting risk of Denial of Service attacks.  In order to enable rate limiting on an API, return to the **Design** menu and ensure that you have selected **HealthChecks** and **All operations**.  From there, select **+ Add policy** under **Inbound processing**.
+5. Humongous Healthcare would like to perform rate limiting as a method of limiting risk of Denial of Service attacks.  In order to enable rate limiting on an API, return to the **Design** menu and ensure that you have selected **HealthChecks** and **All operations**.  From there, select **+ Add policy** under **Inbound processing**.
 
     ![Add a new inbound processing policy.](media/apim-new-policy.png 'Add policy')
 
-7. On the inbound policy list, select the **Limit call rate** policy.
+6. On the inbound policy list, select the **Limit call rate** policy.
 
     ![Select the Limit call rate policy.](media/apim-select-policy.png 'Select policy')
 
-8. Humongous would like to ensure that a particular user does not send more than 10 calls over a 300-second period.  Enter those values into the appropriate fields and select **Save** to create this policy.
+7. Humongous would like to ensure that a particular user does not send more than 10 calls over a 300-second period.  Enter those values into the appropriate fields and select **Save** to create this policy.
 
     ![Limit inbound calls to no more than 10 per 300 seconds per user.](media/apim-create-policy.png 'Create policy')
 
