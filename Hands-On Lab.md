@@ -615,3 +615,9 @@ Because this project uses the `Swashbuckle.AspNetCore` NuGet package, we can bui
     ![Configure the CORS domain.](media/apim-configure-cors.png 'Configure CORS')
 
 ### Task 3: Deploy the Humongous Healthcare Web API service to App Services
+
+1. Open the App Service in your `taw-win-with-app-platform` resource group.  Navigate to the **Deployment Center** option in the **Deployment** menu.  Select **GitHub** from the **Source** drop-down field and enter the **Organization**, **Repository** and **Branch** of your GitHub repository into the corresponding fields.  Click the **Save** button to create the associated GitHub action to deploy the web app.
+
+    ![Create the Web App deployment action in Github.](media/cicd-create-action.png 'Web App Deployment')
+
+
