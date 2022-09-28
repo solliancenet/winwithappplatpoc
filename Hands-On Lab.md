@@ -26,7 +26,8 @@ September 2022
     - [Task 2:  Connect API Management to the App Service](#task-2--connect-api-management-to-the-app-service)
   - [Exercise 5: Deploy the Humongous Healthcare Web Application to access the Web API](#exercise-5-deploy-the-humongous-healthcare-web-application-to-access-the-web-api)
     - [Task 1: Configure API Management to use HTTPS](#task-1-configure-api-management-to-use-https)
-    - [Task 2: Deploy the Humongous Healthcare Web API service to App Services](#task-2-deploy-the-humongous-healthcare-web-api-service-to-app-services)
+    - [Task 2: Configure CORS](#task-2-configure-coors)
+    - [Task 3: Deploy the Humongous Healthcare Web API service to App Services](#task-3-deploy-the-humongous-healthcare-web-api-service-to-app-services)
 
 # Hands-on Lab Step-by-Step
 
@@ -580,4 +581,37 @@ Because this project uses the `Swashbuckle.AspNetCore` NuGet package, we can bui
 ## Exercise 5: Deploy the Humongous Healthcare Web Application to access the Web API
 
 ### Task 1: Configure API Management to use HTTPS
-### Task 2: Deploy the Humongous Healthcare Web API service to App Services
+
+1. Open the API Management service in your `taw-win-with-app-platform` resource group.  Navigate to the **APIS** option in the **APIs** menu, and select the **HealthChecks** API that was created in a previous exercise from the **All APIs** menu.
+
+    ![Select the HealthCheck API.](media/apim-select-api.png 'HealthCheck API')
+
+2. Select the **Settings** tab, and select the **HTTPS** setting in the **General** section.  Click on the **Save** button at the bottom of the page to save the configuration.
+
+    ![Configure HTTPS for the API.](media/apim-configure-https.png 'Configure HTTPS')
+
+### Task 2: Configure CORS
+
+1. Open the App Service in your `taw-win-with-app-platform` resource group.  Copy the App Service endpoint URL from the **Overview** detail and save it for use in a later step.
+
+    ![Obtain the App Service URL.](media/appsvc-endpoint-url.png 'App Service URL')
+
+2. Open the API Management service in your `taw-win-with-app-platform` resource group.  Navigate to the **APIs** option in the **APIs** menu, and select the **HealthChecks** API that was created in a previous exercise from the **All APIs** menu.
+
+    ![Select the HealthCheck API.](media/apim-select-api.png 'HealthCheck API')
+
+3. In the **Design** tab, navigate to the **+ Add policy** option in the **Inbound processing** section.
+
+    > **Note:** Ensure that **All operations** is highlighted to ensure that the CORS policy you are about to add is applied to all of the API endpoints.
+
+    ![Select **+ Add policy** to add a new CORS policy.](media/apim-add-policy.png 'Add CORS Policy')
+
+4. Select the **cors** inbound policy from the collection of policies.
+
+    ![Select CORS inbound policy.](media/apim-select-cors.png 'Select CORS')
+
+5. Enter the App Service endpoint URL obtained in step 1 of this task into the **Allowed origins** field.  Click on the **Save** button at the bottom of the page to save the configuration.
+
+    ![Configure the CORS domain.](media/apim-configure-cors.png 'Configure CORS')
+
+### Task 3: Deploy the Humongous Healthcare Web API service to App Services
