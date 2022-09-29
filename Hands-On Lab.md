@@ -26,7 +26,7 @@ September 2022
     - [Task 2:  Connect API Management to the App Service](#task-2--connect-api-management-to-the-app-service)
   - [Exercise 5: Deploy the Humongous Healthcare Web Application to access the Web API](#exercise-5-deploy-the-humongous-healthcare-web-application-to-access-the-web-api)
     - [Task 1: Configure API Management to use HTTPS](#task-1-configure-api-management-to-use-https)
-    - [Task 2: Configure CORS](#task-2-configure-coors)
+    - [Task 2: Configure CORS](#task-2-configure-cors)
     - [Task 3: Deploy the Humongous Healthcare Web API service to App Services](#task-3-deploy-the-humongous-healthcare-web-api-service-to-app-services)
 
 # Hands-on Lab Step-by-Step
@@ -57,7 +57,7 @@ For this proof of concept, Humongous would also like to see a model example of C
 
 ## Solution architecture
 
-The following diagram provides a high-level overview of the Azure services we will use for implementation. **TODO new diagram**
+The following diagram provides a high-level overview of the Azure services we will use for implementation.
 
 ![High-level architecture, as described below.](media/architecture-diagram.png "High-level architecture")
 
