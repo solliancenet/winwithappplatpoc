@@ -626,9 +626,9 @@ Because this project uses the `Swashbuckle.AspNetCore` NuGet package, we can bui
 
     Create the following secrets.
 
-    - REACT_APP_API_URL - This should be the HealthCheck API Endpoint URL
-    - REACT_APP_API_KEY - This should be the HealthCheck API Subscription API Key
-    
+    - API_URL - This should be the HealthCheck API Endpoint URL
+    - API_KEY - This should be the HealthCheck API Subscription API Key
+
 
 3. Locate the GitHub action YAML file created in your repository by Step 1 located in the `.github/workflows` folder.  Make the following modifications to the contents to ensure the correct working directory and references to GitHub secrets.
 
