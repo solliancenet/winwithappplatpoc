@@ -620,4 +620,41 @@ Because this project uses the `Swashbuckle.AspNetCore` NuGet package, we can bui
 
     ![Create the Web App deployment action in Github.](media/cicd-create-action.png 'Web App Deployment')
 
+2. Add the necessary secrets to GitHub for the App Service deployment.  Navigate to the repository in GitHub and select "Settings > Secrets > Actions".  Use the "New Repository Secret" button to create secrets.
 
+    ![Create repository secrets.](media/github-new-repository-secret.png "Repository Secret")
+
+    Create the following secrets.
+
+    - REACT_APP_API_URL - This should be the HealthCheck API Endpoint URL
+    - REACT_APP_API_KEY - This should be the HealthCheck API Subscription API Key
+    
+
+3. Locate the GitHub action YAML file created in your repository by Step 1 located in the `.github/workflows` folder.  Make the following modifications to the contents to ensure the correct working directory and references to GitHub secrets.
+
+
+    ```yaml
+    ...
+
+    env:                                            # <<-- Add environment variables here
+      REACT_APP_API_URL: ${{ secrets.API_URL }}     # <<-- referencing the GitHub secrets
+      REACT_APP_API_KEY: ${{ secrets.API_KEY }}     # <<-- created in Step 2
+    jobs:
+    build:
+      runs-on: windows-latest
+
+      defaults:                                             # <<-- Add default working directory
+        run:                                                # <<-- here to ensure deployment 
+          working-directory: ./Humongous.Healthcare.Web/    # <<-- targets correct path.
+    ​
+      steps:
+        - uses: actions/checkout@v2
+    ​
+        - name: Set up .NET Core
+          uses: actions/setup-dotnet@v1
+          with:
+            dotnet-version: '6.0.x'
+            include-prerelease: true
+
+    ...
+    ```
